@@ -1,0 +1,73 @@
+---
+title: "Lifestyle Analysis"
+author: "Sidney Christensen"
+date: "2024-06-06"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+data = read.csv("C:\\Users\\sidne\\Downloads\\Capstone.csv")
+
+df <- head(data, 10)
+print(df)
+```
+
+```{r}
+value_counts <- table(data$Occupation)
+value_counts_df <- data.frame(Occupation = names(value_counts), count = as.numeric(value_counts))
+
+total_count <- sum(value_counts_df$count)
+value_counts_df$percentage <- paste0(round(value_counts_df$count / total_count * 100), "%")
+
+value_counts_df$legend_label <- paste(value_counts_df$Occupation, "(", value_counts_df$percentage, ")")
+
+pie_chart <- ggplot(value_counts_df, aes(x = "", y = count, fill = legend_label)) +
+  geom_bar(stat = "identity", width = 1) +
+  geom_col(color = 'white') +
+  coord_polar(theta = "y") +
+  theme_classic() +
+  labs(title = "Occupation", fill = "Occupation & Percentage")  
+
+pie_chart <- pie_chart + guides(fill = guide_legend(override.aes = list(shape = NA)))
+
+print(pie_chart)
+```
+
+```{r}
+histogram <- ggplot(data, aes(x = Age)) +
+  geom_histogram(fill = "#4DD091", color = "black") +
+  labs(x = "Age", y = "Frequency", title = "Age Distribution") +
+  theme_minimal()
+
+print(histogram)
+```
+
+```{r}
+gender_counts <- table(data$Gender)
+gender_df <- data.frame(Gender = names(gender_counts), Count = as.numeric(gender_counts))
+
+total_count <- sum(gender_df$Count)
+gender_df$Percentage <- round((gender_df$Count / total_count) * 100, 1)
+
+pie_chart <- ggplot(gender_df, aes(x = "", y = Count, fill = Gender)) +
+  geom_bar(stat = "identity", width = 1) +
+  geom_col(color = 'black') +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = paste(Gender, "(", Percentage, "%)")), 
+            position = position_stack(vjust = 0.5)) +
+  scale_fill_brewer(palette = "Paired") +
+  theme_classic() +
+  labs(title = "Gender Percentage")
+
+print(pie_chart)
+```
